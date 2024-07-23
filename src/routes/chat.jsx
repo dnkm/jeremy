@@ -1,62 +1,67 @@
-import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Loading from "../components/loading/loading";
+import { useContext, useState } from "react";
 import { AppContext } from "../utils/context";
 
 export default function Chat() {
-  let { user, navigate } = useContext(AppContext);
   let [tos, setTos] = useState(false);
-  let { type } = useParams();
-
-  useEffect(() => {
-    if (user === null) navigate("/auth");
-  }, []);
 
   return (
     <div className="flex flex-col items-center h-full">
-      {tos ? (
-        type === "participant" ? (
-          <Participant />
-        ) : (
-          <Volunteer />
-        )
-      ) : (
-        <TOS setTos={setTos} />
-      )}
+      {tos ? <Topic /> : <TOS setTos={setTos} />}
     </div>
   );
 }
 
-function Participant() {
-  let [queue, setQueue] = useState(parseInt(Math.random() * 10, 10));
+const TOPICS = [
+  "",
+  "Family Issues",
+  "LGBTQ+",
+  "Academic Stress",
+  "Loss of Loved One",
+  "Relationships/Dating",
+  "Homesick",
+  "Bullying/Discrimination",
+  "Other",
+];
+
+function Topic() {
+  let { navigate } = useContext(AppContext);
+
+  async function chatRequest(ev) {
+    ev.preventDefault();
+    let grad_year = ev.target.grad_year.value;
+    let topic = ev.target.topic.value;
+
+    let chatId = parseInt(Math.random() * 100000, 10);
+
+    navigate(`/messenger/${chatId}`);
+  }
 
   return (
-    <div className="flex flex-col items-center h-full">
+    <div className="flex flex-col h-full">
       <div className="h-1/4" />
-      <Loading />
-      <div className="text-xl font-bold">Please Wait</div>
-      <div className="italic">A volunteer will be with you shortly</div>
-      <div className="mt-5 italic">
-        {queue === 1 ? (
-          <div>
-            There is <span className="font-bold">1</span> person in line...
-          </div>
-        ) : (
-          <div className="tracking-widest">
-            There are{" "}
-            <span className="font-bold text-2xl text-success">{queue}</span>{" "}
-            people in line...
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function Volunteer() {
-  return (
-    <div>
-      <Loading />
+      <form
+        onSubmit={chatRequest}
+        className="bg-base-100 drop-shadow p-10 flex flex-col justify-center items-center"
+      >
+        <div className="font-bold text-xl">High School Graduation Year</div>
+        <input
+          name="grad_year"
+          type="number"
+          className="input input-primary focus:outline-none w-full"
+        />
+        <div className="font-bold text-xl mt-3">
+          Topic to Discuss{" "}
+          <span className="text-sm italic">(Leave Blank If Unsure)</span>
+        </div>
+        <select name="topic" className="select select-primary w-full">
+          {TOPICS.map((topic, i) => (
+            <option key={topic} value={topic}>
+              {topic}
+            </option>
+          ))}
+        </select>
+        <button className="btn btn-primary mt-5 w-full">Request Chat</button>
+      </form>
     </div>
   );
 }

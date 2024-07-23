@@ -34,20 +34,12 @@ export default function Home() {
       </div>
 
       <div className="p-10 space-y-5 flex flex-col items-center">
-        {user ? (
-          <>
-            <Link to="/chat/participant" className="btn btn-primary w-72">
-              Chat As Participant
-            </Link>
-            <Link to="/chat/volunteer" className="btn btn-secondary w-72">
-              Chat As Volunteer
-            </Link>
-          </>
-        ) : (
-          <Link to="/auth" className="btn btn-primary">
-            Click Here To Login
-          </Link>
-        )}
+        <Link to="/chat" className="btn btn-primary w-72">
+          Chat As Participant
+        </Link>
+        <Link to="/auth" className="btn btn-secondary w-72">
+          Chat As Volunteer
+        </Link>
       </div>
     </div>
   );
