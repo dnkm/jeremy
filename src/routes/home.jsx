@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { AppContext } from "../utils/context";
 import { Link } from "react-router-dom";
+import { AppContext } from "../utils/context";
 
 export default function Home() {
   let { user } = useContext(AppContext);
@@ -15,7 +15,7 @@ export default function Home() {
         }}
       ></div>
       <div
-        className="relative bg-white drop-shadow h-24 flex items-center justify-center text-3xl tracking-widest font-bold w-full lg:w-2/3"
+        className="relative bg-white drop-shadow h-24 flex items-center justify-center text-2xl lg:text-3xl tracking-widest font-bold w-full lg:w-2/3"
         style={{ top: "-3rem" }}
       >
         The Helping Hand Foundation
@@ -34,10 +34,13 @@ export default function Home() {
       </div>
 
       <div className="p-10 space-y-5 flex flex-col items-center">
-        <Link to="/chat" className="btn btn-primary w-72">
+        <Link to="/chat-request" className="btn btn-primary w-72">
           Chat As Participant
         </Link>
-        <Link to="/auth" className="btn btn-secondary w-72">
+        <Link
+          to={user ? `/volunteer` : `/auth`}
+          className="btn btn-secondary w-72"
+        >
           Chat As Volunteer
         </Link>
       </div>

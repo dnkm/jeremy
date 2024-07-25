@@ -1,9 +1,10 @@
 import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { routes } from "./utils/routes";
 import Header from "./components/header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "./components/footer";
 import { AppContext } from "./utils/context";
+import { auth } from "./utils/firebase";
 
 export default function App() {
   return (
@@ -21,6 +22,10 @@ function Main() {
   const [theme, setTheme] = useState("light");
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => (user ? setUser(user) : setUser(null)));
+  }, []);
 
   return (
     <AppContext.Provider value={{ user, setUser, navigate }}>

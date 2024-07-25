@@ -4,14 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { AppContext } from "../utils/context";
 
 export default function Auth() {
-  let { setUser, navigate } = useContext(AppContext);
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) setUser(user);
-      else setUser(null);
-    });
-  }, []);
+  let { navigate } = useContext(AppContext);
 
   async function signIn(ev) {
     ev.preventDefault();
@@ -19,7 +12,7 @@ export default function Auth() {
     let password = ev.target.password.value;
 
     await signInWithEmailAndPassword(auth, email, password)
-      .then(() => navigate("/"))
+      .then(() => navigate("/volunteer"))
       .catch((err) => alert(err.message));
   }
 

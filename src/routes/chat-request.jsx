@@ -1,7 +1,10 @@
+import { addDoc, collection, doc } from "firebase/firestore";
 import { useContext, useState } from "react";
 import { AppContext } from "../utils/context";
+import TOS from "../components/tos";
+import { db } from "../utils/firebase";
 
-export default function Chat() {
+export default function ChatRequest() {
   let [tos, setTos] = useState(false);
 
   return (
@@ -28,12 +31,18 @@ function Topic() {
 
   async function chatRequest(ev) {
     ev.preventDefault();
-    let grad_year = ev.target.grad_year.value;
+    let grad_year = parseInt(ev.target.grad_year.value);
     let topic = ev.target.topic.value;
 
-    let chatId = parseInt(Math.random() * 100000, 10);
+    const docRef = await addDoc(collection(db, "chats"), {
+      created_at: new Date(),
+      grad_year,
+      topic,
+      volunteer_id: "",
+      status: "waiting",
+    });
 
-    navigate(`/messenger/${chatId}`);
+    navigate(`/queue/${docRef.id}`);
   }
 
   return (
@@ -63,35 +72,5 @@ function Topic() {
         <button className="btn btn-primary mt-5 w-full">Request Chat</button>
       </form>
     </div>
-  );
-}
-
-function TOS({ setTos }) {
-  return (
-    <>
-      <div className="h-1/4" />
-      <div className="relative w-full lg:w-2/3 px-5 bg-base-100 py-5 drop-shadow">
-        <div className="text-2xl font-bold underline italic mb-2">
-          Terms of Service
-        </div>
-        <div className="mb-5">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-        <div className="flex justify-center">
-          <button
-            className="btn btn-primary px-10"
-            onClick={() => setTos(true)}
-          >
-            I Agree
-          </button>
-        </div>
-      </div>
-    </>
   );
 }

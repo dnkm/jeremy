@@ -1,22 +1,25 @@
-import { Route } from "react-router-dom";
 import Auth from "../routes/auth";
 import Home from "../routes/home";
-import Chat from "../routes/chat";
 import Team from "../routes/team";
 import Faq from "../routes/faq";
 import Partner from "../routes/partner";
 import Contact from "../routes/contact";
 import Messenger from "../routes/messenger";
+import Volunteer from "../routes/volunteer";
+import ChatRequest from "../routes/chat-request";
+import Queue from "../routes/queue";
 
 const routes = [
   { element: <Home />, path: "/" },
   { element: <Auth />, path: "/auth" },
-  { element: <Chat />, path: "/chat" },
+  { element: <ChatRequest />, path: "/chat-request" },
   { element: <Contact />, path: "/contact" },
   { element: <Partner />, path: "/partner" },
   { element: <Team />, path: "/team" },
   { element: <Faq />, path: "/faq" },
   { element: <Messenger />, path: "/messenger/:chatId" },
+  { element: <Volunteer />, path: "/volunteer" },
+  { element: <Queue />, path: "/queue/:chatId" },
 ];
 
 export { routes };

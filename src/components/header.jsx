@@ -13,23 +13,19 @@ export default function Header() {
 
   return (
     <div className="h-20 bg-base-100 flex items-center drop-shadow">
-      <div className="w-1/4" />
-      <div className="w-1/2 flex justify-center">
-        <Link to="/" className="text-3xl font-bold tracking-widest">
-          Helping Hand Foundation
+      {user && <div className="w-1/4" />}
+      <div className="flex-grow flex justify-center">
+        <Link to="/" className="text-2xl lg:text-3xl font-bold tracking-widest">
+          The Helping Hand Foundation
         </Link>
       </div>
-      <div className="w-1/4 flex justify-end ">
-        {user ? (
+      {user && (
+        <div className="w-1/4 flex justify-end ">
           <Link onClick={signOut} className="mr-10 text-xl">
             Sign Out
           </Link>
-        ) : (
-          <Link className="mr-10 text-xl" to="/auth">
-            Login
-          </Link>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
