@@ -5,9 +5,10 @@ import Faq from "../routes/faq";
 import Partner from "../routes/partner";
 import Contact from "../routes/contact";
 import Messenger from "../routes/messenger";
-import Volunteer from "../routes/volunteer";
+import Volunteer from "../routes/volunteer/volunteer";
 import ChatRequest from "../routes/chat-request";
 import Queue from "../routes/queue";
+import Admin from "../routes/volunteer/admin";
 
 const routes = [
   { element: <Home />, path: "/" },
@@ -20,6 +21,7 @@ const routes = [
   { element: <Messenger />, path: "/messenger/:chatId" },
   { element: <Volunteer />, path: "/volunteer" },
   { element: <Queue />, path: "/queue/:chatId" },
+  { element: <Admin />, path: "/admin"}
 ];
 
 export { routes };

@@ -4,7 +4,11 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { AppContext } from "../utils/context";
 
 export default function Auth() {
-  let { navigate } = useContext(AppContext);
+  let { user, navigate } = useContext(AppContext);
+
+  useEffect(() => {
+    if (user) navigate("/volunteer");
+  }, [])
 
   async function signIn(ev) {
     ev.preventDefault();
