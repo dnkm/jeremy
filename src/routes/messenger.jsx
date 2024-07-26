@@ -30,7 +30,6 @@ export default function Messenger() {
       loadMessages();
       loadChat();
     }
-
   }, [chatId]);
 
   async function loadMessages() {
@@ -70,60 +69,67 @@ export default function Messenger() {
   }
 
   async function closeMessenger() {
-
     if (chat?.status !== "closed")
       updateDoc(doc(db, "chats", chatId), {
         status: "closed",
-        closed_at: new Date()
+        closed_at: new Date(),
       });
 
-    if (user) navigate('/volunteer');
-    else navigate('/');
+    if (user) navigate("/volunteer");
+    else navigate("/");
   }
 
   return (
     <div className="h-full">
       <div className="h-full flex flex-col">
         <div className="bg-neutral p-2">
-          <button onClick={closeMessenger} className="btn btn-error">Close Chat</button>
+          <button onClick={closeMessenger} className="btn btn-error">
+            Close Chat
+          </button>
         </div>
         <div className="p-2 flex-grow overflow-scroll">
           {type === "volunteer"
             ? messages.map((message) => (
-              <div
-                key={message.id + message.from}
-                className={`chat ${message.from === "volunteer" ? "chat-end" : "chat-start"
-                  }`}
-              >
                 <div
-                  style={{ maxWidth: "75%" }}
-                  className={`chat-bubble break-all ${message.from === "volunteer"
-                    ? "chat-bubble-primary"
-                    : "chat-bubble-neutral"
-                    }`}
+                  key={message.id + message.from}
+                  className={`chat ${
+                    message.from === "volunteer" ? "chat-end" : "chat-start"
+                  }`}
                 >
-                  {message.content}
+                  <div
+                    style={{ maxWidth: "75%" }}
+                    className={`chat-bubble break-all ${
+                      message.from === "volunteer"
+                        ? "chat-bubble-primary"
+                        : "chat-bubble-neutral"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
                 </div>
-              </div>
-            ))
+              ))
             : messages.map((message) => (
-              <div
-                key={message.id + message.from}
-                className={`chat ${message.from === "participant" ? "chat-end" : "chat-start"
-                  }`}
-              >
                 <div
-                  style={{ maxWidth: "75%" }}
-                  className={`chat-bubble break-all ${message.from === "participant"
-                    ? "chat-bubble-primary"
-                    : "chat-bubble-neutral"
-                    }`}
+                  key={message.id + message.from}
+                  className={`chat ${
+                    message.from === "participant" ? "chat-end" : "chat-start"
+                  }`}
                 >
-                  {message.content}
+                  <div
+                    style={{ maxWidth: "75%" }}
+                    className={`chat-bubble break-all ${
+                      message.from === "participant"
+                        ? "chat-bubble-primary"
+                        : "chat-bubble-neutral"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
                 </div>
-              </div>
-            ))}
-          {chat?.status === "closed" && <div className="divider">Messenger Has Been Closed</div>}
+              ))}
+          {chat?.status === "closed" && (
+            <div className="divider">Messenger Has Been Closed</div>
+          )}
           <div id="bottom" />
         </div>
         <form className="flex items-center" onSubmit={sendMessage}>
@@ -136,7 +142,10 @@ export default function Messenger() {
           />
           <button
             disabled={chat?.status === "closed"}
-            className="btn btn-primary rounded-none">Send</button>
+            className="btn btn-primary rounded-none"
+          >
+            Send
+          </button>
         </form>
       </div>
     </div>

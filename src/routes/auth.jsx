@@ -8,7 +8,7 @@ export default function Auth() {
 
   useEffect(() => {
     if (user) navigate("/volunteer");
-  }, [])
+  }, []);
 
   async function signIn(ev) {
     ev.preventDefault();

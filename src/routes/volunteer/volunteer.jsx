@@ -10,7 +10,6 @@ export default function Volunteer() {
     if (!user) navigate("/auth");
   }, [user]);
 
-
   return (
     <div className="flex flex-col lg:flex-row h-full">
       {user && <Profile user={user} navigate={navigate} />}
@@ -18,5 +17,3 @@ export default function Volunteer() {
     </div>
   );
 }
-
-
