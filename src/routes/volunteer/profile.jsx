@@ -8,24 +8,23 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { db } from "../../utils/firebase";
+import { AppContext } from "../../utils/context";
 
 export default function Profile({ user, navigate }) {
-  let [profile, setProfile] = useState(undefined);
+  let { profile } = useContext(AppContext);
   let [time, setTime] = useState(undefined);
+  let [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProfile();
-    loadStats();
+    let tid = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(tid);
   }, []);
 
-  async function getProfile() {
-    let docRef = doc(db, "users", user?.uid);
-    let docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) setProfile(docSnap.data());
-  }
+  useEffect(() => {
+    if (profile) loadStats();
+  }, [profile]);
 
   async function loadStats() {
     let q = query(

@@ -1,10 +1,11 @@
-import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { routes } from "./utils/routes";
 import Header from "./components/header";
 import { useEffect, useState } from "react";
 import Footer from "./components/footer";
 import { AppContext } from "./utils/context";
-import { auth } from "./utils/firebase";
+import { auth, db } from "./utils/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function App() {
   return (
@@ -21,14 +22,24 @@ export default function App() {
 function Main() {
   const [theme, setTheme] = useState("light");
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => (user ? setUser(user) : setUser(null)));
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        getDoc(doc(db, "users", user?.uid)).then((profileSnap) => {
+          if (profileSnap.exists()) setProfile(profileSnap.data());
+          Navigate("/volunteer");
+        });
+      }
+      setUser(user);
+    });
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, setUser, navigate }}>
+    <AppContext.Provider value={{ user, profile, setUser, navigate }}>
       <div className="min-h-screen" data-theme={theme}>
         <Header />
         <div

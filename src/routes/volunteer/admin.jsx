@@ -1,26 +1,11 @@
+import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../utils/context";
-import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import Modal from "../../components/modal";
 
 export default function Admin() {
-  let { user, navigate } = useContext(AppContext);
-  let [profile, setProfile] = useState(undefined);
-  let [viewProfile, setViewProfile] = useState(undefined);
-
-  useEffect(() => {
-    if (user) getProfile();
-    else navigate(`/auth`);
-  }, [user]);
-
-  async function getProfile() {
-    let docRef = doc(db, "users", user?.uid);
-    let docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) setProfile(docSnap.data());
-  }
-
+  let { profile, navigate } = useContext(AppContext);
   if (typeof profile === undefined) return <div />;
   if (profile && profile.is_admin === false) navigate(`/volunteer`);
 
@@ -29,20 +14,14 @@ export default function Admin() {
       <div className="bg-base-300 text-xl text-center font-bold py-3">
         Admin Page
       </div>
-      <Users setViewProfile={setViewProfile} />
-      {typeof viewProfile !== "undefined" && (
-        <Modal close={() => setViewProfile(undefined)}>
-          {typeof viewProfile !== "undefined" && (
-            <Account profile={viewProfile} />
-          )}
-        </Modal>
-      )}
+      <Users />
     </div>
   );
 }
 
-function Users({ setViewProfile }) {
+function Users() {
   let [users, setUsers] = useState([]);
+  let [viewProfile, setViewProfile] = useState(undefined);
 
   useEffect(() => {
     loadUsers();
@@ -72,6 +51,7 @@ function Users({ setViewProfile }) {
         <table className="table">
           <thead>
             <tr>
+              <th>Type</th>
               <th>Name</th>
               <th>Volunteer Time</th>
               <th>E-mail</th>
@@ -80,11 +60,20 @@ function Users({ setViewProfile }) {
               <th></th>
             </tr>
           </thead>
-          {users.map((user, i) => (
-            <User key={user.id} user={user} setViewProfile={setViewProfile} />
-          ))}
+          <tbody>
+            {users.map((user, i) => (
+              <User key={user.id} user={user} setViewProfile={setViewProfile} />
+            ))}
+          </tbody>
         </table>
       </div>
+      {typeof viewProfile !== "undefined" && (
+        <Modal close={() => setViewProfile(undefined)}>
+          {typeof viewProfile !== "undefined" && (
+            <AccountForm profile={viewProfile} key={viewProfile?.email} />
+          )}
+        </Modal>
+      )}
     </>
   );
 }
@@ -96,6 +85,15 @@ function User({ user, setViewProfile }) {
 
   return (
     <tr>
+      <td>
+        <div>
+          {user?.is_admin ? (
+            <div className="badge badge-sm badge-success">Admin</div>
+          ) : (
+            <div className="badge badge-sm badge-primary">Volunteer</div>
+          )}
+        </div>
+      </td>
       <td>{user?.first_name + " " + user?.last_name}</td>
       <td>
         {hours}h {minutes}m
@@ -115,7 +113,7 @@ function User({ user, setViewProfile }) {
   );
 }
 
-function Account({ profile }) {
+function AccountForm({ profile }) {
   let first_name = profile?.first_name;
   let last_name = profile?.last_name;
   let grad_year = profile?.grad_year;
@@ -124,28 +122,24 @@ function Account({ profile }) {
   let is_admin = profile?.is_admin;
   let school = profile?.school;
 
-  async function submit(ev) {
+  async function onSubmit(ev) {
     ev.preventDefault();
-    let first_name = ev.target.first_name.value;
-    let last_name = ev.target.last_name;
-    let school = ev.target.school;
-    let grad_year = parseInt(ev.target.grad_year);
-    let email = ev.target.email;
-    let password = ev.target.password;
-    let phone_number = ev.target.phone_number;
-    let is_admin = ev.target.is_admin === "Yes";
+    let data = Object.fromEntries(new FormData(ev.target));
+    data.is_admin = data.is_admin === "Yes";
 
     if (profile?.id) {
+      // update
     } else {
+      // create user in user table
+      let prof = await addDoc(collection(db, "users"), data);
+      alert("User Created");
     }
   }
 
   return (
     <form
-      onClick={(ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-      }}
+      onClick={(ev) => ev.stopPropagation()}
+      onSubmit={onSubmit}
       className="w-full lg:w-2/3 p-5 drop-shadow bg-base-100 grid grid-cols-2 gap-2"
     >
       <div>
@@ -191,14 +185,6 @@ function Account({ profile }) {
         />
       </div>
       <div>
-        <div className="mr-2">Password (Minimum 6 Characters): </div>
-        <input
-          disabled={profile?.id}
-          name="password"
-          className="input input-primary input-sm w-full"
-        />
-      </div>
-      <div>
         <div className="mr-2">Phone Number: </div>
         <input
           defaultValue={phone_number}
@@ -211,13 +197,14 @@ function Account({ profile }) {
         <select
           className="select select-primary select-sm"
           defaultValue={is_admin ? "Yes" : "No"}
+          name="is_admin"
         >
           <option value="No">No</option>
           <option value="Yes">Yes</option>
         </select>
       </div>
-      <div>
-        <button className="btn btn-sm btn-success">
+      <div className="col-span-2 flex justify-center">
+        <button className="btn btn-sm btn-primary">
           {profile?.id ? "Save" : "Create"}
         </button>
       </div>
