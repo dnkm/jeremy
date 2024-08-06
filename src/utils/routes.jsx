@@ -8,10 +8,12 @@ import Volunteer from "../routes/volunteer/volunteer";
 import ChatRequest from "../routes/chat-request";
 import Queue from "../routes/queue";
 import Admin from "../routes/volunteer/admin";
+import Signup from "../routes/signup";
 
 const routes = [
   { element: <Home />, path: "/" },
   { element: <Auth />, path: "/auth" },
+  { element: <Signup />, path: "/signup" },
   { element: <ChatRequest />, path: "/chat-request" },
   { element: <Partner />, path: "/partner" },
   { element: <Team />, path: "/team" },

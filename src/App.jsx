@@ -5,7 +5,14 @@ import { useEffect, useState } from "react";
 import Footer from "./components/footer";
 import { AppContext } from "./utils/context";
 import { auth, db } from "./utils/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 export default function App() {
   return (
@@ -29,9 +36,18 @@ function Main() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        getDoc(doc(db, "users", user?.uid)).then((profileSnap) => {
-          if (profileSnap.exists()) setProfile(profileSnap.data());
-          Navigate("/volunteer");
+        console.log("email", user.email);
+        
+        let q = query(
+          collection(db, "users"),
+          where("email", "==", user.email)
+        );
+
+        getDocs(q).then((profileSnap) => {
+          console.log(profileSnap.docs);
+          if (profileSnap.docs.length > 0)
+            setProfile(profileSnap.docs[0].data());
+          navigate("/volunteer");
         });
       }
       setUser(user);

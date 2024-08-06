@@ -7,7 +7,8 @@ import Modal from "../../components/modal";
 export default function Admin() {
   let { profile, navigate } = useContext(AppContext);
   if (typeof profile === undefined) return <div />;
-  if (profile && profile.is_admin === false) navigate(`/volunteer`);
+  if (!profile || profile.is_admin === false) navigate(`/volunteer`);
+  console.log("profile", profile);
 
   return (
     <div className="relative">
