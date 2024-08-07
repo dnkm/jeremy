@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../utils/context";
 import { useParams } from "react-router-dom";
@@ -12,10 +13,12 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../utils/firebase";
+import { differenceInMinutes } from "date-fns";
 
 export default function Messenger() {
+  let navigate = useNavigate();
   let { chatId } = useParams();
-  let { user, navigate } = useContext(AppContext);
+  let { user, profile, setProfile } = useContext(AppContext);
   let [messages, setMessages] = useState([]);
   let [chat, setChat] = useState(undefined);
 
@@ -69,11 +72,23 @@ export default function Messenger() {
   }
 
   async function closeMessenger() {
-    if (chat?.status !== "closed")
+    if (profile) {
+      let time = differenceInMinutes(new Date(), chat.created_at.toDate());
+      updateDoc(doc(db, "users", profile.id), {
+        volunteer_time: (profile.volunteer_time || 0) + time,
+      });
+      setProfile({
+        ...profile,
+        volunteer_time: (profile.volunteer_time || 0) + time,
+      });
+    }
+
+    if (chat?.status !== "closed") {
       updateDoc(doc(db, "chats", chatId), {
         status: "closed",
         closed_at: new Date(),
       });
+    }
 
     if (user) navigate("/volunteer");
     else navigate("/");

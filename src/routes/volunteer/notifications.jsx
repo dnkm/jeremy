@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   collection,
   doc,
@@ -10,8 +11,9 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../../utils/firebase";
 
-export default function Notifications({ user, navigate }) {
+export default function Notifications({ user }) {
   let [notifications, setNotifications] = useState([{}]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadNotifications();

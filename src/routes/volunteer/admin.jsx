@@ -1,3 +1,7 @@
+import { setDoc, updateDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
+import { getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../utils/context";
@@ -5,10 +9,9 @@ import { db } from "../../utils/firebase";
 import Modal from "../../components/modal";
 
 export default function Admin() {
-  let { profile, navigate } = useContext(AppContext);
-  if (typeof profile === undefined) return <div />;
+  const navigate = useNavigate();
+  let { profile } = useContext(AppContext);
   if (!profile || profile.is_admin === false) navigate(`/volunteer`);
-  console.log("profile", profile);
 
   return (
     <div className="relative">
@@ -34,6 +37,17 @@ function Users() {
     let u = [];
     snapshot.docs.forEach((doc) => u.push({ ...doc.data(), id: doc.id }));
     setUsers(u);
+  }
+
+  async function addUser(data) {
+    let ref = await addDoc(collection(db, "users"), data);
+    setUsers([...users, { id: ref.id, ...data }]);
+  }
+
+  async function saveUser(id, data) {
+    let ref = doc(db, "users", id);
+    await updateDoc(ref, data);
+    setUsers(users.map((user) => (user.id === id ? { id, ...data } : user)));
   }
 
   return (
@@ -71,7 +85,12 @@ function Users() {
       {typeof viewProfile !== "undefined" && (
         <Modal close={() => setViewProfile(undefined)}>
           {typeof viewProfile !== "undefined" && (
-            <AccountForm profile={viewProfile} key={viewProfile?.email} />
+            <AccountForm
+              profile={viewProfile}
+              key={viewProfile?.email}
+              addUser={addUser}
+              saveUser={saveUser}
+            />
           )}
         </Modal>
       )}
@@ -114,7 +133,7 @@ function User({ user, setViewProfile }) {
   );
 }
 
-function AccountForm({ profile }) {
+function AccountForm({ profile, addUser, saveUser }) {
   let first_name = profile?.first_name;
   let last_name = profile?.last_name;
   let grad_year = profile?.grad_year;
@@ -129,12 +148,11 @@ function AccountForm({ profile }) {
     data.is_admin = data.is_admin === "Yes";
 
     if (profile?.id) {
-      // update
+      await saveUser(profile.id, data);
     } else {
-      // create user in user table
-      let prof = await addDoc(collection(db, "users"), data);
-      alert("User Created");
+      await addUser(data);
     }
+    alert("Saved");
   }
 
   return (

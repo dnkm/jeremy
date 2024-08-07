@@ -1,20 +1,9 @@
-import {
-  and,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
-import { db } from "../../utils/firebase";
 import { AppContext } from "../../utils/context";
 
-export default function Profile({ user, navigate }) {
+export default function Profile({ user }) {
   let { profile } = useContext(AppContext);
-  let [time, setTime] = useState(undefined);
+  // let [time, setTime] = useState(undefined);
   let [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,29 +16,30 @@ export default function Profile({ user, navigate }) {
   }, [profile]);
 
   async function loadStats() {
-    let q = query(
-      collection(db, "chats"),
-      and(
-        where("status", "==", "closed"),
-        where("volunteer_id", "==", user?.uid)
-      )
-    );
-    let snapshot = await getDocs(q);
-    let total = 0;
-    snapshot.docs.forEach((doc) => {
-      let chat = doc.data();
-      let start = chat.created_at.toDate();
-      let end = chat.closed_at.toDate();
-      let diff = Math.abs(end - start);
-      let minutes = Math.floor(diff / 1000 / 60);
-      total += minutes;
-    });
-    setTime(total);
-
-    updateDoc(doc(db, "users", user?.uid), {
-      volunteer_time: total,
-    });
+    // let q = query(
+    //   collection(db, "chats"),
+    //   and(
+    //     where("status", "==", "closed"),
+    //     where("volunteer_id", "==", user?.uid)
+    //   )
+    // );
+    // let snapshot = await getDocs(q);
+    // let total = 0;
+    // snapshot.docs.forEach((doc) => {
+    //   let chat = doc.data();
+    //   let start = chat.created_at.toDate();
+    //   let end = chat.closed_at.toDate();
+    //   let diff = Math.abs(end - start);
+    //   let minutes = Math.floor(diff / 1000 / 60);
+    //   total += minutes;
+    // });
+    // setTime(total);
+    // updateDoc(doc(db, "users", user?.uid), {
+    //   volunteer_time: total,
+    // });
   }
+
+  let time = profile?.volunteer_time || 0;
 
   return (
     <div className="w-full lg:w-1/2 flex flex-col items-center lg:h-full">
@@ -94,16 +84,6 @@ export default function Profile({ user, navigate }) {
             </div>
           </div>
         </div>
-        {profile?.isAdmin && (
-          <div>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => navigate(`/admin`)}
-            >
-              View Admin Page
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

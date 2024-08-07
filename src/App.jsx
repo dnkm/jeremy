@@ -36,17 +36,16 @@ function Main() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("email", user.email);
-        
         let q = query(
           collection(db, "users"),
           where("email", "==", user.email)
         );
 
         getDocs(q).then((profileSnap) => {
-          console.log(profileSnap.docs);
-          if (profileSnap.docs.length > 0)
-            setProfile(profileSnap.docs[0].data());
+          if (profileSnap.docs.length > 0) {
+            let profile = profileSnap.docs[0];
+            setProfile({ id: profile.id, ...profile.data() });
+          }
           navigate("/volunteer");
         });
       }
@@ -55,7 +54,7 @@ function Main() {
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, profile, setUser, navigate }}>
+    <AppContext.Provider value={{ user, profile, setProfile, setUser, navigate }}>
       <div className="min-h-screen" data-theme={theme}>
         <Header />
         <div

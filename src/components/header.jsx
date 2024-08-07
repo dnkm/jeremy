@@ -4,7 +4,7 @@ import { AppContext } from "../utils/context";
 import { auth } from "../utils/firebase";
 
 export default function Header() {
-  let { user, navigate } = useContext(AppContext);
+  let { user, navigate, profile } = useContext(AppContext);
 
   async function signOut() {
     await auth.signOut();
@@ -20,6 +20,11 @@ export default function Header() {
         </Link>
       </div>
       <div className="w-1/4 flex justify-end">
+        {profile?.is_admin && (
+          <Link to="/admin" className="btn btn-primary mr-5">
+            Admin
+          </Link>
+        )}
         {user ? (
           <Link onClick={signOut} className="btn btn-primary mr-10">
             Sign Out

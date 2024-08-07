@@ -1,20 +1,18 @@
-import { useContext, useEffect, useState } from "react";
-import Loading from "../components/loading/loading";
-import { useParams } from "react-router-dom";
-import { db } from "../utils/firebase";
 import {
   collection,
-  doc,
   onSnapshot,
   orderBy,
   query,
-  updateDoc,
-  where,
+  where
 } from "firebase/firestore";
-import { AppContext } from "../utils/context";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from 'react-router-dom';
+import Loading from "../components/loading/loading";
+import { db } from "../utils/firebase";
 
 export default function Queue() {
-  let { navigate } = useContext(AppContext);
+  // let { navigate } = useContext(AppContext);
+  let navigate = useNavigate();
   let { chatId } = useParams();
   let [queue, setQueue] = useState(0);
 
@@ -49,21 +47,13 @@ export default function Queue() {
       <div className="text-xl font-bold">Please Wait</div>
       <div className="italic">A volunteer will be with you shortly</div>
       <div className="mt-5 italic">
-        {queue === 1 ? (
-          <div>
-            There is{" "}
-            <span className="font-bold text-2xl text-success mx-0.5">1</span>{" "}
-            person in line...
-          </div>
-        ) : (
-          <div className="tracking-widest">
-            There are{" "}
-            <span className="font-bold text-2xl text-success mx-0.5">
-              {queue}
-            </span>{" "}
-            people in line...
-          </div>
-        )}
+        <div className="tracking-widest">
+          There are{" "}
+          <span className="font-bold text-2xl text-success mx-0.5">
+            {queue}
+          </span>{" "}
+          {queue === 1 ? "person" : "people"} in line...
+        </div>
       </div>
       {queue === 0 && (
         <div className="mt-5 bold italic text-xl">
