@@ -60,15 +60,16 @@ function Topic() {
         />
         <div className="font-bold text-xl mt-3">
           Topic to Discuss{" "}
-          <span className="text-sm italic">(Leave Blank If Unsure)</span>
+          <span className="text-sm italic"></span>
         </div>
-        <select name="topic" className="select select-primary w-full">
+        <input name="topic" className="input input-primary w-full" />
+        {/* <select name="topic" className="select select-primary w-full">
           {TOPICS.map((topic, i) => (
             <option key={topic} value={topic}>
               {topic}
             </option>
           ))}
-        </select>
+        </select> */}
         <button className="btn btn-primary mt-5 w-full">Request Chat</button>
       </form>
     </div>
